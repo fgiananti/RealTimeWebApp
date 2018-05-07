@@ -8,7 +8,7 @@ const express = require('express'),
       server = http.createServer(app),
       io = socketIO(server),
       publicPath = path.join(__dirname, './public'),
-      {generateMessage} = require('./modules/chat/server/message')
+      {generateMessage, generateLocationMessage} = require('./modules/chat/server/message')
 
 const indexRoutes = require('./routes/index');
 
@@ -28,11 +28,10 @@ io.on('connection', (socket) => {
     console.log('New message', message);
     io.emit('newMessage', generateMessage(message.from, message.text));
     callback('this is from the server');
-    // socket.broadcast.emit('newMessage', {
-    //   from: message.from,
-    //   text: message.text,
-    //   createdAt: new Date().getTime()
-    // });
+  });
+
+  socket.on('createLocationMessage', (coords) =>{
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude))
   });
 
   socket.on('disconnect', () => {
