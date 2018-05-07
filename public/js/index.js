@@ -55,19 +55,21 @@ socket.on('newUser', function(message) {
 
 // in "ascolto" dell'evento newMessage dal server
 socket.on('newMessage', function(message) {
+  const formattedTime = moment(message.createdAt).format('h:mm a');
   const li = document.createElement('li');
-  li.appendChild(document.createTextNode(`${message.from}: ${message.text}`));
+  li.appendChild(document.createTextNode(`${message.from} ${formattedTime}: ${message.text}`));
   messageList.appendChild(li);
   console.log('New message', message);
 });
 
 socket.on('newLocationMessage', function(message) {
+  const formattedTime = moment(message.createdAt).format('h:mm a');
   const li = document.createElement('li');
   const link = document.createElement('a');
   link.setAttribute('href', message.url);
   link.setAttribute('target', '_blank');
   link.innerHTML = 'My current location';
-  li.innerHTML = `${message.from}: `;
+  li.innerHTML = `${message.from} ${formattedTime}: `;
   li.append(link);
   messageList.appendChild(li);
 })
