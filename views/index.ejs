@@ -8,19 +8,8 @@
     <p>Welcome to the chat app</p>
 
 
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <!-- let socket = io(); tradotto: richiesta, da parte del client, di aprire un web socket di tenere la connessione attiva. il metodo io() è fondamentale, permette al server di comunicare conil client -->
-    <script>
-      let socket = io();
-      // CLIENT MESSAGES
-      // event listener: on connect (di un client al socket) -> console.log sulla console del client (browser)
-      socket.on('connect', () => {
-        console.log('Connected to server');
-      });
-      // event listener: on disconnect
-      socket.on('disconnect', () => {
-        console.log('Disconnected form server')
-      });
-    </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/index.js"></script>
+
   </body>
 </html>

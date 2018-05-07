@@ -8,16 +8,14 @@ const express = require('express'),
       http = require('http'),
       server = http.createServer(app),
       // io = websockect server
-      io = socketIO(server);
-
-
+      io = socketIO(server),
+      // usato path per conoscenza (è nuts)
+      publicPath = path.join(__dirname, './public');
 
 const indexRoutes = require('./routes/index');
 
-// usato path per conoscenza (è nuts)
-const publicPath = path.join(__dirname, './public');
-
 app.set('view engine', 'ejs');
+app.use(express.static(publicPath));
 
 app.use('/', indexRoutes);
 
@@ -30,6 +28,6 @@ io.on('connection', (socket) => {
 });
 
 // socket.io richiede server qui
-server.listen(process.env.PORT, () => {
-  console.log('connected to the server');
+server.listen(port, () => {
+  console.log(`Server is up on ${port}`);
 });
