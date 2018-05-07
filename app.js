@@ -22,16 +22,15 @@ app.use('/', indexRoutes);
 io.on('connection', (socket) => {
   console.log('new user connected');
 
-  // from server to client, solo un esempio non reale: quando il client si connette (on connection) ---> (newEmail - emit). Dovrà essere impostato un event listener per questo evento sul client
-  socket.emit('newMessage', {
-    from: 'Fra',
-    text: 'Hey. This is Fra (server)',
-    createAt: 123
-  });
-
-  // tradotto: server in "ascolto" dell'evento 'createEmail' dal client
+  // tradotto: server in "ascolto" dell'evento 'createMessage' dal client
   socket.on('createMessage', (message) => {
     console.log('New message', message);
+    //
+    io.emit('newMessage', {
+      from: message.from,
+      text: message.text,
+      createdAt: new Date().getTime()
+    });
   });
 
   socket.on('disconnect', () => {
