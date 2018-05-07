@@ -2,15 +2,16 @@ let socket = io();
 
 const messageForm = document.querySelector('#message-form');
 const messageText = document.querySelector('#message-input');
-const messageList = document.querySelector('#message-list');
+const messageList = document.querySelector('#message');
 const sendLocBtn = document.querySelector('#send-location');
 
 messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
   socket.emit('createMessage', {
-    from: 'Fra',
+    from: 'User',
     text: messageText.value
   }, function() {
+    messageText.value = '';
   });
 });
 
@@ -18,12 +19,20 @@ sendLocBtn.addEventListener('click', (e) => {
   if (!navigator.geolocation) {
     return alert('Geolocation non supported by your browser')
   }
+
+  sendLocBtn.setAttribute('disabled', 'disabled');
+  sendLocBtn.innerHTML = 'Sending Location...';
+
   navigator.geolocation.getCurrentPosition(function(position) {
+    sendLocBtn.removeAttribute('disabled', 'disabled');
+    sendLocBtn.innerHTML = 'Send Location';
     socket.emit('createLocationMessage', {
       latitude: position.coords.latitude,
       longitude: position.coords.longitude
     });
   }, function() {
+    sendLocBtn.setAttribute('disabled', 'disabled');
+    sendLocBtn.innerHTML = 'Send Location';
     alert('Unable to fetch location');
   })
 })
