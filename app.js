@@ -7,7 +7,8 @@ const express = require('express'),
       http = require('http'),
       server = http.createServer(app),
       io = socketIO(server),
-      publicPath = path.join(__dirname, './public');
+      publicPath = path.join(__dirname, './public'),
+      {generateMessage} = require('./modules/chat/server/message')
 
 const indexRoutes = require('./routes/index');
 
@@ -19,26 +20,14 @@ app.use('/', indexRoutes);
 io.on('connection', (socket) => {
   console.log('new user connected');
 
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat app',
-    createdAt: new Date().getTime()
-  });
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app'));
 
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'New user joined',
-    createdAt: new Date().getTime()
-  });
+  socket.broadcast.emit('newMessage', generateMessage('Admin','New user joined'));
 
   socket.on('createMessage', (message) => {
     console.log('New message', message);
 
-    io.emit('newMessage', {
-      from: message.from,
-      text: message.text,
-      createdAt: new Date().getTime()
-    });
+    io.emit('newMessage', generateMessage(message.from, message.text));
 
     // socket.broadcast.emit('newMessage', {
     //   from: message.from,
