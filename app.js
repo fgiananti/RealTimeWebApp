@@ -11,11 +11,14 @@ const express = require('express'),
       {generateMessage, generateLocationMessage} = require('./modules/chat/server/message')
 
 const indexRoutes = require('./routes/index');
+const chatRoutes = require('./routes/chat');
 
 app.set('view engine', 'ejs');
 app.use(express.static(publicPath));
 
 app.use('/', indexRoutes);
+app.use('/chat', chatRoutes);
+
 
 io.on('connection', (socket) => {
   console.log('new user connected');
