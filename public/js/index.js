@@ -5,6 +5,22 @@ const messageText = document.querySelector('#message-input');
 const messageList = document.querySelector('#messages');
 const sendLocBtn = document.querySelector('#send-location');
 
+function scrollToBottom() {
+  const newMessage = messageList.querySelector('li:last-child');
+  if (!newMessage.previousElementSibling) {
+    return
+  }
+  const clientHeight = messageList.clientHeight;
+  const scrollTop = messageList.scrollTop;
+  const scrollHeight = messageList.scrollHeight;
+  const newMessageHeight = newMessage.clientHeight;
+  const lastMessageHeight = newMessage.previousElementSibling.clientHeight;
+
+  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    messageList.scrollTop = scrollHeight;
+  };
+};
+
 messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
   socket.emit('createMessage', {
@@ -64,6 +80,7 @@ socket.on('newMessage', function(message) {
     createdAt: formattedTime
   });
   messageList.innerHTML += html;
+  scrollToBottom();
 });
 
 socket.on('newLocationMessage', function(message) {
@@ -77,4 +94,5 @@ socket.on('newLocationMessage', function(message) {
     createdAt: formattedTime
   });
   messageList.innerHTML += html;
+  // scrollToBottom();
 });
