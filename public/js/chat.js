@@ -54,9 +54,30 @@ sendLocBtn.addEventListener('click', (e) => {
 })
 
 // CLIENT MESSAGES
-// in "ascolto" dell'evento disconnect dal server
+// in "ascolto" dell'evento connect dal server
 socket.on('connect', function() {
-  console.log('Connected to server');
+
+  var urlParams;
+  (window.onpopstate = function () {
+    var match,
+        pl     = /\+/g,  // Regex for replacing addition symbol with a space
+        search = /([^&=]+)=?([^&]*)/g,
+        decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+        query  = window.location.search.substring(1);
+
+    urlParams = {};
+    while (match = search.exec(query))
+       urlParams[decode(match[1])] = decode(match[2]);
+     })();
+
+  socket.emit('join', urlParams, function(err) {
+    if (err) {
+      alert(err);
+      window.location.href = '/';
+    } else {
+      console.log('No error');
+    };
+  });
 });
 
 // in "ascolto" dell'evento disconnect dal server
@@ -64,9 +85,24 @@ socket.on('disconnect', function() {
   console.log('Disconnected from server')
 });
 
+
 // in "ascolto" dell'evento newUser dal server
 socket.on('newUser', function(message) {
   console.log(message);
+});
+
+socket.on('updateUserList', function (users) {
+  const ol = document.createElement('ol');
+  const usersDiv = document.querySelector('#users');
+  usersDiv.innerHTML = '';
+
+  users.forEach(function (user) {
+    const li = document.createElement('li');
+    li.innerHTML = user;
+    ol.append(li);
+  })
+
+  usersDiv.append(ol);
 });
 
 // in "ascolto" dell'evento newMessage dal server
