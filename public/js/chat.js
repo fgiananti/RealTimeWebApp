@@ -24,7 +24,6 @@ function scrollToBottom() {
 messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
   socket.emit('createMessage', {
-    from: 'User',
     text: messageText.value
   }, function() {
     messageText.value = '';
