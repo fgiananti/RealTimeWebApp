@@ -2,7 +2,7 @@ let socket = io();
 
 const messageForm = document.querySelector('#message-form');
 const messageText = document.querySelector('#message-input');
-const messageList = document.querySelector('#message');
+const messageList = document.querySelector('#messages');
 const sendLocBtn = document.querySelector('#send-location');
 
 messageForm.addEventListener('submit', (e) => {
@@ -56,20 +56,25 @@ socket.on('newUser', function(message) {
 // in "ascolto" dell'evento newMessage dal server
 socket.on('newMessage', function(message) {
   const formattedTime = moment(message.createdAt).format('h:mm a');
-  const li = document.createElement('li');
-  li.appendChild(document.createTextNode(`${message.from} ${formattedTime}: ${message.text}`));
-  messageList.appendChild(li);
-  console.log('New message', message);
+
+  const template = document.querySelector('#message-template').innerHTML;
+  const html = Mustache.render(template, {
+    text: message.text,
+    from: message.from,
+    createdAt: formattedTime
+  });
+  messageList.innerHTML += html;
 });
 
 socket.on('newLocationMessage', function(message) {
   const formattedTime = moment(message.createdAt).format('h:mm a');
-  const li = document.createElement('li');
-  const link = document.createElement('a');
-  link.setAttribute('href', message.url);
-  link.setAttribute('target', '_blank');
-  link.innerHTML = 'My current location';
-  li.innerHTML = `${message.from} ${formattedTime}: `;
-  li.append(link);
-  messageList.appendChild(li);
-})
+
+  const template = document.querySelector('#location-message-template').innerHTML;
+  // Mustache.render takes 2 arguments: the template you want to render and the data to be injected in it
+  const html = Mustache.render(template, {
+    url: message.url,
+    from: message.from,
+    createdAt: formattedTime
+  });
+  messageList.innerHTML += html;
+});
